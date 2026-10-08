@@ -1,0 +1,8 @@
+#exclude secrets
+secret.auto.tfvars
+key.json
+*.tfstate
+terraform.tfstate.backup
+
+#Exclude modules and providers
+.terraform
