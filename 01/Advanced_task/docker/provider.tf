@@ -1,3 +1,3 @@
 provider "docker" {
- context  = "fedora-docker"
+  context  = "fedora-docker"
 }
