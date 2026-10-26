@@ -13,4 +13,9 @@ users:
     ssh-authorized-keys:
       - ${ssh_public}
 runcmd:
-  - usermod -aG docker ${username}
+  - |
+    if getent group docker >/dev/null 2>&1; then
+      usermod -aG docker ${username}
+    else
+      echo "Warning: docker group does not exist yet; skipping usermod"
+    fi

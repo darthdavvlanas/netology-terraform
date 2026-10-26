@@ -1,10 +1,10 @@
 resource "yandex_compute_instance" "fedora_docker" {
 
-    name                        = "fedora-docker"
-    hostname                    = "fedora-docker"
+    name                        = "centos9-docker"
+    hostname                    = "centos9-docker"
     folder_id                   = var.folder_id
     zone                        = var.zone
-    platform_id                 = "standard-v2"
+    platform_id                 = "standard-v3"
 
     allow_stopping_for_update   = true
 
@@ -16,7 +16,7 @@ resource "yandex_compute_instance" "fedora_docker" {
 
     boot_disk {
         initialize_params {
-            image_id            = data.yandex_compute_image.fedora43_docker.id
+            image_id            = data.yandex_compute_image.centos9_docker.id
             size                = 25
             type                = "network-hdd"
         }

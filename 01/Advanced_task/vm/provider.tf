@@ -1,6 +1,8 @@
 provider "yandex" {
-  service_account_key_file  = "key.json"
+  service_account_key_file  = "/home/davlanas/authorized_key.json"
   cloud_id                  = var.cloud_id
   folder_id                 = var.folder_id
   zone                      = var.zone
+  endpoint                  = "api.yandexcloud.kz:443"
+  storage_endpoint          = "https://storage.yandexcloud.kz"
 }
