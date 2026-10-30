@@ -8,7 +8,7 @@ variable "folder_id" {
 
 variable "zone" {
   type    = string
-  default = "kz1-a"
+  default = "ru-central1-a"
 }
 
 variable "subnet" {
