@@ -1,0 +1,51 @@
+---
+- name: Test
+  gather_facts: false
+  hosts: webservers
+  become: true
+
+  pre_tasks:
+    - name: Validating the ssh port is open
+      ansible.builtin.wait_for:
+        host: "{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}"
+        port: 22
+        delay: 5
+        timeout: 300
+        state: started
+        search_regex: OpenSSH
+
+    - name: Wait for cloud-init to finish
+      ansible.builtin.wait_for:
+        path: /var/lib/cloud/instance/boot-finished
+        timeout: 60
+
+    # Install python3.9 for my ansible version
+    # - name: Install Python 3.9 on Ubuntu 20.o4 LTS
+    #   ansible.builtin.raw: |
+    #     apt-get update
+    #     apt-get install -y python3.9
+
+  tasks:
+    # - name: Install Nginx Web Server on Debian Family
+    #   apt:
+    #     name:
+    #       - nginx
+    #       - jq
+    #     state: latest
+    #     update_cache: yes
+
+    # cat /tmp/own.pass  | jq
+    - name: Create own secret
+      ansible.builtin.copy:
+        dest: /tmp/own.pass
+        mode: "0644"
+        content: "{{ secrets[inventory_hostname] }}"
+      when: secrets[inventory_hostname] is defined
+
+    # cat /tmp/all.pass  | jq
+    - name: Create all secrets
+      ansible.builtin.copy:
+        dest: /tmp/all.pass
+        mode: "0644"
+        content: "{{ secrets }}"
+      when: secrets is defined
