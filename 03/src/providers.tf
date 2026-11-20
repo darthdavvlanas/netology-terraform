@@ -18,7 +18,7 @@ provider "yandex" {
 
 provider "yandex" {
   alias                     = "ru"
-  service_account_key_file  = pathexpand("~/authorized_key-ru.json")
+  service_account_key_file  = peathxpand("~/authorized_key-ru.json")
   cloud_id                  = var.cloud_id
   folder_id                 = var.folder_id
   zone                      = var.default_zone
