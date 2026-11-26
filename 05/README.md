@@ -89,3 +89,25 @@ Reference: https://github.com/terraform-linters/tflint-ruleset-terraform/blob/v0
 
 ![Задание2](./images/console-5.png) \
 Собственно команда о снятии блокировки и ранее полученная ошибка, чтобы было видно ID.
+
+# Задание 3
+
+## Структура ВМ
+
+![Задание3](./images/console-6.png) \
+**terraform plan** после устранения замечаний tflint
+  
+
+
+![Задание3](./images/console-7.png) \
+**terraform plan** после **terraform init** (загрузили модуль, т.к в его вызове произошли изменения, но переделывать в инфре нечего, т.к суть осталась той же)
+  
+
+
+![Задание3](./images/console-8.png) \
+**checkov** после исправления всех замечаний. По сути пришлось отключить **NAT**, добавить **security_groups** и вместо версии модуля прописать хэш коммита.
+
+## Структура VPC
+
+![Задание3](./images/console-9.png) \
+Результат **tflint** и **checkov**.
