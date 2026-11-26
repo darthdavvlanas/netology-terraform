@@ -104,3 +104,31 @@ variable "ip_list" {
     error_message = "Every element can be correct IPv4-address."
   }
 }
+
+variable "any_string" {
+  type        = string
+  description = "any string"
+
+  validation {
+    condition     = can(regex("^[^A-Z]*$", var.any_string))
+    error_message = "String can't contains upper symbol (A-Z)."
+  }
+}
+
+variable "in_the_end_there_can_be_only_one" {
+  description = "Who is better Connor or Duncan?"
+  type = object({
+    Dunkan = optional(bool)
+    Connor = optional(bool)
+  })
+
+  default = {
+    Dunkan = true
+    Connor = false
+  }
+
+  validation {
+    error_message = "There can be only one MacLeod"
+    condition     = var.in_the_end_there_can_be_only_one.Dunkan != var.in_the_end_there_can_be_only_one.Connor
+  }
+}
