@@ -36,7 +36,7 @@ module "marketing" {
   network_id          = data.terraform_remote_state.vpc.outputs.network_id
   subnet_zones        = ["ru-central1-a"]
   subnet_ids          = [data.terraform_remote_state.vpc.outputs.subnet_ids["ru-central1-a"]]
-  security_group_ids  = [yandex_vpc_security_group.id]
+  security_group_ids  = [yandex_vpc_security_group.web.id]
   instance_name       = "web-marketing"
   instance_count      = 1
   image_family        = "ubuntu-2404-lts"
@@ -60,7 +60,7 @@ module "analytics" {
   network_id          = data.terraform_remote_state.vpc.outputs.network_id
   subnet_zones        = ["ru-central1-a"]
   subnet_ids          = [data.terraform_remote_state.vpc.outputs.subnet_ids["ru-central1-a"]]
-  security_group_ids  = [yandex_vpc_security_group.id]
+  security_group_ids  = [yandex_vpc_security_group.web.id]
   instance_name       = "web-analytics"
   instance_count      = 1
   image_family        = "ubuntu-2404-lts"
