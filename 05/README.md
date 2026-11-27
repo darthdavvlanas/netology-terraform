@@ -111,3 +111,10 @@ Reference: https://github.com/terraform-linters/tflint-ruleset-terraform/blob/v0
 
 ![Задание3](./images/console-9.png) \
 Результат **tflint** и **checkov**.
+
+# Задание 4
+
+![Задание4](./images/console-10.png) \
+
+![Задание4](./images/console-11.png) \
+
