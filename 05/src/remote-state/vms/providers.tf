@@ -1,16 +1,10 @@
 terraform {
   
   backend "s3" {
-    # shared_credentials_file = "~/.aws/credentials"
-    profile                 = "netology"
-    
+    profile = "netology"
     bucket  = "netology-bucket-0038xfhpjx6ok6ro"
     key     = "netology/develop/vms/terraform.tfstate"
     region  = "ru-central1"
-    
-    # Встроенный механизм блокировок (Terraform >= 1.6)
-    # Не требует отдельной базы данных!
-    use_lockfile = true
     
     endpoints = {
       s3 = "https://storage.yandexcloud.net"
@@ -23,7 +17,12 @@ terraform {
   }
   required_providers {
     yandex = {
-      source = "yandex-cloud/yandex"
+      source  = "yandex-cloud/yandex"
+      version = "~> 0.250.0"
+    }
+    template = {
+      source  = "hashicorp/template"
+      version = "~> 2.2"
     }
   }
   required_version = "~>1.16.0"

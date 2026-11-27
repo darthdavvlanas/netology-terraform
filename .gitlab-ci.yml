@@ -1,0 +1,82 @@
+---
+image:
+  name: hashicorp/terraform:1.16.4
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+cache:
+  paths:
+    - 05/src/remote-state/vms/.terraform
+
+variables:
+  TF_VAR_cloud_id: "${CLOUD_ID}"
+  TF_VAR_folder_id: "${FOLDER_ID}"
+  TF_VAR_user: "${SSH_USER}"
+
+before_script:
+  - |
+    cat <<EOF >> ~/.terraformrc
+    provider_installation {
+      network_mirror {
+        url = "https://terraform-mirror.yandexcloud.net/"
+        include = ["registry.terraform.io/*/*"]
+      }
+      direct {
+        exclude = ["registry.terraform.io/*/*"]
+      }
+    }
+    EOF
+  - echo "$YC_KEY" | base64 -d > ~/authorized_key-ru.json
+  - mkdir -p ~/.aws
+  - |
+    mkdir -p ~/.aws
+    cat <<EOF > ~/.aws/credentials
+    [netology]
+    aws_access_key_id = ${AWS_ACCESS_KEY_ID}
+    aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}
+    EOF
+  - |
+    mkdir -p ~/.ssh
+    cat <<EOF > ~/.ssh/k.guskov.pub
+    [netology]
+    ssh-rsa AAAAB3Nza***
+    EOF
+  - cd 05/src/remote-state/vms
+  - terraform init
+
+stages:
+  - validate
+  - plan
+  - apply
+  - destroy
+
+validate:
+  tags: [shared]
+  stage: validate
+  script:  
+    - terraform validate
+
+plan:
+  tags: [shared]
+  stage: plan
+  script:
+    - terraform plan -out="planfile"
+  artifacts:
+    paths:
+      - 05/src/remote-state/vms/planfile
+    expire_in: 1 day
+
+apply:
+  tags: [shared]
+  stage: apply
+  script:
+    - terraform apply -auto-approve "planfile"
+  when: manual
+
+destroy:
+  tags: [shared]
+  stage: destroy
+  script:
+    - terraform destroy -auto-approve
+  when: manual

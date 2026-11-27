@@ -81,3 +81,96 @@ Reference: https://github.com/terraform-linters/tflint-ruleset-terraform/blob/v0
 
 ![Задание2](./images/console-3.png) \
 Настройки, хотя они вроде как в коде и так будут.
+
+## 4
+
+![Задание2](./images/console-4.png) \
+Как и на лекции **console** не создала блокировки. Поэтому я изменил название одной из ВМ и запустил **apply** в двух окнах, закономерно в одном из них получив lock.
+
+![Задание2](./images/console-5.png) \
+Собственно команда о снятии блокировки и ранее полученная ошибка, чтобы было видно ID.
+
+# Задание 3
+
+## Структура ВМ
+
+![Задание3](./images/console-6.png) \
+**terraform plan** после устранения замечаний tflint
+  
+
+
+![Задание3](./images/console-7.png) \
+**terraform plan** после **terraform init** (загрузили модуль, т.к в его вызове произошли изменения, но переделывать в инфре нечего, т.к суть осталась той же)
+  
+
+
+![Задание3](./images/console-8.png) \
+**checkov** после исправления всех замечаний. По сути пришлось отключить **NAT**, добавить **security_groups** и вместо версии модуля прописать хэш коммита.
+
+## Структура VPC
+
+![Задание3](./images/console-9.png) \
+Результат **tflint** и **checkov**.
+
+# Задание 4
+
+![Задание4](./images/console-10.png) \
+
+![Задание4](./images/console-11.png) \
+
+# Задание 5
+
+```
+variable "any_string" {
+  type        = string
+  description = "any string"
+
+  validation {
+    condition     = can(regex("^[^A-Z]*$", var.any_string))
+    error_message = "String can't contains upper symbol (A-Z)."
+  }
+}
+
+variable "in_the_end_there_can_be_only_one" {
+  description = "Who is better Connor or Duncan?"
+  type = object({
+    Dunkan = optional(bool)
+    Connor = optional(bool)
+  })
+
+  default = {
+    Dunkan = true
+    Connor = false
+  }
+
+  validation {
+    error_message = "There can be only one MacLeod"
+    condition     = var.in_the_end_there_can_be_only_one.Dunkan != var.in_the_end_there_can_be_only_one.Connor
+  }
+}
+```
+# Задание 6
+
+Импорт в gitlab ручной через ключ, который создал для этих нужд в github. Дальше работает pipeline:
+1. Проводит валидацию конфигов
+2. Создает план
+3. Apply с подтверждением  
+4. Destroy с подтверждением
+
+Внутри пришлось пойти на ряд ухищрений и нет проверки линтом и чековым, но на это ушло бы слишком много времени. Это мой первый pipeline. 
+
+![Задание6](./images/console-12.png) \
+
+![Задание6](./images/console-13.png) \
+
+![Задание6](./images/console-14.png) \
+
+# Задание 7
+
+Финальная версия кода - ветка terraform-hotfix в директории remote-state. Там есть переменные с валидацие и отдельный root модуль для S3 из 7го задания. 
+
+
+![Задание7](./images/console-15.png) \
+Пример вывода образца backend.
+
+Единственное с чем не стал решать проблему - права сервисного аккаунта от которого работает TF. По идее надо ему дать роль admin, но меня от одной мысли об этом коробит.... Нет ни малейшего желания так делать с аккаунтом, креды от которого есть риск потерять в ходе обучения. 

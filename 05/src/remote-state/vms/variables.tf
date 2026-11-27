@@ -11,12 +11,6 @@ variable "folder_id" {
   description = "Folder id"
 }
 
-variable "default_zone" {
-  type        = string
-  default     = "ru-central1-a"
-  description = "Default zone for deploy"
-}
-
 #Environment vars
 variable "env_name" {
   type        = string
@@ -30,10 +24,111 @@ variable "user" {
   description = "User name for ssh connection"
 }
 
-
-variable "ssh_keys" {
-  type        = string
-  default     = "~/.ssh/k.guskov.pub"
-  sensitive   = true
-  description = "Public keys for ssh connection"
+#Network security vars
+variable "security_group_ingress" {
+  description = "secrules ingress"
+  type = list(object(
+    {
+      protocol       = string
+      description    = string
+      v4_cidr_blocks = list(string)
+      port           = optional(number)
+      from_port      = optional(number)
+      to_port        = optional(number)
+  }))
+  default = [
+    {
+      protocol       = "TCP"
+      description    = "разрешить входящий ssh"
+      v4_cidr_blocks = ["0.0.0.0/0"]
+      port           = 22
+    },
+    {
+      protocol       = "TCP"
+      description    = "разрешить входящий  http"
+      v4_cidr_blocks = ["0.0.0.0/0"]
+      port           = 80
+    },
+    {
+      protocol       = "TCP"
+      description    = "разрешить входящий https"
+      v4_cidr_blocks = ["0.0.0.0/0"]
+      port           = 443
+    },
+  ]
 }
+
+
+variable "security_group_egress" {
+  description = "secrules egress"
+  type = list(object(
+    {
+      protocol       = string
+      description    = string
+      v4_cidr_blocks = list(string)
+      port           = optional(number)
+      from_port      = optional(number)
+      to_port        = optional(number)
+  }))
+  default = [
+    { 
+      protocol       = "TCP"
+      description    = "разрешить весь исходящий трафик"
+      v4_cidr_blocks = ["0.0.0.0/0"]
+      from_port      = 0
+      to_port        = 65365
+    }
+  ]
+}
+
+#Validation vars
+# variable "ip_address" {
+#   type        = string
+#   description = "ip-address"
+#   default     = "192.168.0.1"
+#   validation {
+#     condition     = can(regex("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", var.ip_address))
+#     error_message = "Value can be correct IPv4-address, e.g 192.168.0.1."
+#   }
+# }
+
+# variable "ip_list" {
+#   type        = list(string)
+#   description = "список ip-адресов"
+#   default     = ["192.168.0.1", "1.1.1.1", "127.0.0.1"]
+#   validation {
+#     condition = alltrue([
+#       for ip in var.ip_list :
+#       can(regex("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", ip))
+#     ])
+#     error_message = "Every element can be correct IPv4-address."
+#   }
+# }
+
+# variable "any_string" {
+#   type        = string
+#   description = "any string"
+
+#   validation {
+#     condition     = can(regex("^[^A-Z]*$", var.any_string))
+#     error_message = "String can't contains upper symbol (A-Z)."
+#   }
+# }
+
+# variable "in_the_end_there_can_be_only_one" {
+#   description = "Who is better Connor or Duncan?"
+#   type = object({
+#     Dunkan = optional(bool)
+#     Connor = optional(bool)
+#   })
+
+#   default = {
+#     Dunkan = true
+#     Connor = false
+#   }
+
+#   validation {
+#     error_message = "There can be only one MacLeod"
+#     condition     = var.in_the_end_there_can_be_only_one.Dunkan != var.in_the_end_there_can_be_only_one.Connor
+#   }
+# }
